@@ -21,30 +21,35 @@ const todos = [
     },
 ];
 
-const ul = document.querySelector('ul');
-const filteringInput = document.querySelector('#filter')
-const addTodoForm = document.querySelector('#form-add')
-const hidingCheckbox = document.querySelector('#hidingCheckbox')
+const ul = document.querySelector('ul'); // to-dos are appended here.
+const filteringInput = document.querySelector('#filter') // input field for filtering.
+const addTodoForm = document.querySelector('#form-add') // form field to add to-dos.
+const hidingCheckbox = document.querySelector('#hidingCheckbox') // checkbox to hide completed to-dos.
 
 const filters = {
     textSearch: '',
     hidingCompletedTodo: false
 }
 
-const renderTodos = function(todos, filters) {
 
+const renderTodos = function(todos, filters) {
     ul.innerHTML = ''
 
+    // First, filter to-dos using the words which the user enters.
     const filteredTodos = todos.filter((todo) => {
         return todo.text.toLowerCase().includes(filters.textSearch.toLowerCase())
     })
 
+    // Second, filter to-dos based on completion.
     const incompletedTodos = filteredTodos.filter((t) => t.completed === false)
 
+    // Show a summary of to-dos the user needs to complete.
     document.querySelector('#summary').textContent = `You have ${incompletedTodos.length} things to do.`
 
+    // To-dos for rendering are determined by the user's check on the checkbox.
     const todosForRendering = filters.hidingCompletedTodo ? incompletedTodos : filteredTodos
 
+    // Display to-dos using <li> tags into <ul> tag.
     todosForRendering.map((todo) => {
         const li = document.createElement('li');
         li.textContent = todo.text;
@@ -52,6 +57,7 @@ const renderTodos = function(todos, filters) {
     })
 }
 
+// If the button within the form is clicked, this event goes.
 addTodoForm.addEventListener('submit', function(e) {
     e.preventDefault()
     const todoText = e.target.elements.addTodoInput.value
@@ -60,6 +66,8 @@ addTodoForm.addEventListener('submit', function(e) {
     }
 
     const todo = {text: todoText, completed: false}
+
+    // Check if there is a duplicate to-do.
     const hasSameTodo = todos.some(t => t.text === todo.text)
 
     if (hasSameTodo) {
@@ -68,9 +76,12 @@ addTodoForm.addEventListener('submit', function(e) {
         todos.push(todo)
         renderTodos(todos, filters)
     }
+
+    // Empty the input field.
     e.target.elements.addTodoInput.value = ""
 })
 
+// Whenever the user adds a letter, filtering applies.
 filteringInput.addEventListener('input', function(e) {
     filters.textSearch = e.target.value
     renderTodos(todos, filters)
