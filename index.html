@@ -7,11 +7,17 @@
 <body>
     <h1>To do List</h1>
     <h2 id="summary"></h2>
-    <form id="form-add">
+    <form id="formAdd">
         <input type="text" id="addTodoInput" name="addTodoInput" />
         <button id="addTodoButton">Add</button>
     </form>
     <input type="text" id="filter" placeholder="Filter" />
+
+    <select id="sortDropdown">
+        <option value="default">Default</option>
+        <option value="byName">Sort by Name</option>
+    </select>
+
     <div>
         <ul>
         </ul>

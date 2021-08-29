@@ -23,12 +23,14 @@ const todos = [
 
 const ul = document.querySelector('ul'); // to-dos are appended here.
 const filteringInput = document.querySelector('#filter') // input field for filtering.
-const addTodoForm = document.querySelector('#form-add') // form field to add to-dos.
+const addTodoForm = document.querySelector('#formAdd') // form field to add to-dos.
 const hidingCheckbox = document.querySelector('#hidingCheckbox') // checkbox to hide completed to-dos.
+const sortDropdown = document.querySelector('#sortDropdown') // dropdown to sort
 
 const filters = {
     textSearch: '',
-    hidingCompletedTodo: false
+    hidingCompletedTodo: false,
+    sortbyName: false
 }
 
 
@@ -48,6 +50,13 @@ const renderTodos = function(todos, filters) {
 
     // To-dos for rendering are determined by the user's check on the checkbox.
     const todosForRendering = filters.hidingCompletedTodo ? incompletedTodos : filteredTodos
+
+    // if the user asks to sort by Name using dropdown...
+    if (filters.sortbyName) {
+        todosForRendering.sort(function(a, b) {
+            return a.text < b.text ? -1 : a.text > b.text ? 1 : 0;
+        })
+    }
 
     // Display to-dos using <li> tags into <ul> tag.
     todosForRendering.map((todo) => {
@@ -90,6 +99,16 @@ filteringInput.addEventListener('input', function(e) {
 hidingCheckbox.addEventListener('change', function(e) {
     filters.hidingCompletedTodo = e.target.checked
     renderTodos(todos, filters)
+})
+
+sortDropdown.addEventListener('change', function(e) {
+    if (e.target.value === 'byName') {
+        filters.sortbyName = true;
+    } else {
+        filters.sortbyName = false;
+    }
+
+    renderTodos(todos, filters);
 })
 
 renderTodos(todos, filters)
