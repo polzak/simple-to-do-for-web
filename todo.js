@@ -26,6 +26,7 @@ const filteringInput = document.querySelector('#filter') // input field for filt
 const addTodoForm = document.querySelector('#formAdd') // form field to add to-dos.
 const hidingCheckbox = document.querySelector('#hidingCheckbox') // checkbox to hide completed to-dos.
 const sortDropdown = document.querySelector('#sortDropdown') // dropdown to sort
+const saveButton = document.querySelector('#saveButton') // a button to save to-dos
 
 const filters = {
     textSearch: '',
@@ -109,6 +110,14 @@ sortDropdown.addEventListener('change', function(e) {
     }
 
     renderTodos(todos, filters);
+})
+
+saveButton.addEventListener('click', function(e) {
+    // Convert todos object into JSON string to save it anywhere.
+    const todosForSave = JSON.stringify(todos)
+
+    // pseudo saving.
+    console.log(todosForSave)
 })
 
 renderTodos(todos, filters)
