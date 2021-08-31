@@ -1,32 +1,11 @@
-const todos = [
-    {
-        text: 'Study Java',
-        completed: false
-    },
-    {
-        text: 'Play the piano',
-        completed: true
-    },
-    {
-        text: 'Learn Kotlin',
-        completed: false
-    },
-    {
-        text: 'Practice React',
-        completed: true
-    },
-    {
-        text: 'Build the house',
-        completed: true
-    },
-];
+let todos = []
 
 const ul = document.querySelector('ul'); // to-dos are appended here.
 const filteringInput = document.querySelector('#filter') // input field for filtering.
 const addTodoForm = document.querySelector('#formAdd') // form field to add to-dos.
 const hidingCheckbox = document.querySelector('#hidingCheckbox') // checkbox to hide completed to-dos.
 const sortDropdown = document.querySelector('#sortDropdown') // dropdown to sort
-const saveButton = document.querySelector('#saveButton') // a button to save to-dos
+const removeAllButton = document.querySelector('#removeAll') // a button to remove all the data from Local Storage
 
 const filters = {
     textSearch: '',
@@ -35,12 +14,50 @@ const filters = {
 }
 
 
-const renderTodos = function(todos, filters) {
+// Load to-dos from Local Storage.
+// If there is no to-dos saved or this is the first time to use the app
+// it returns an empty array.
+const loadTodos = function() {
+    const td = JSON.parse(localStorage.getItem('todos'))
+    if (td === null) {
+        console.log('There is no to-dos saved before.')
+        return []
+    }
+    return td
+}
+
+
+// Save the current to-dos into Local Storage.
+const saveTodos = function(td) {
+    const todosString = JSON.stringify(td)
+    localStorage.setItem('todos', todosString)
+    console.log('Saved to-dos successfully!')
+}
+
+
+// Remove all the to-dos from Local Storage.
+// Warning!!!
+const removeAllTodos = function() {
+    // Clear the Local Storage.
+    localStorage.clear()
+    todos = []
+    console.log('Removed all the data from Local Storage')
+    renderTodos(todos, filters)
+}
+
+
+const renderTodos = function(td, filters) {
     ul.innerHTML = ''
 
+    // If there is no to-dos, then no need to render more.
+    if (td.length < 1) {
+        document.querySelector('#summary').textContent = `You have nothing to do.`
+        return
+    }
+    
     // First, filter to-dos using the words which the user enters.
-    const filteredTodos = todos.filter((todo) => {
-        return todo.text.toLowerCase().includes(filters.textSearch.toLowerCase())
+    const filteredTodos = td.filter((t) => {
+        return t.text.toLowerCase().includes(filters.textSearch.toLowerCase())
     })
 
     // Second, filter to-dos based on completion.
@@ -60,9 +77,9 @@ const renderTodos = function(todos, filters) {
     }
 
     // Display to-dos using <li> tags into <ul> tag.
-    todosForRendering.map((todo) => {
+    todosForRendering.map((t) => {
         const li = document.createElement('li');
-        li.textContent = todo.text;
+        li.textContent = t.text;
         ul.appendChild(li);
     })
 }
@@ -84,6 +101,7 @@ addTodoForm.addEventListener('submit', function(e) {
         alert('You already have the same todo!')
     } else {
         todos.push(todo)
+        saveTodos(todos)
         renderTodos(todos, filters)
     }
 
@@ -112,12 +130,10 @@ sortDropdown.addEventListener('change', function(e) {
     renderTodos(todos, filters);
 })
 
-saveButton.addEventListener('click', function(e) {
-    // Convert todos object into JSON string to save it anywhere.
-    const todosForSave = JSON.stringify(todos)
-
-    // pseudo saving.
-    console.log(todosForSave)
+removeAllButton.addEventListener('click', function(e) {
+    removeAllTodos()
 })
 
+
+todos = loadTodos()
 renderTodos(todos, filters)
